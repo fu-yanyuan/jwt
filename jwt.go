@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/dgrijalva/jwt-go"
 )
@@ -18,7 +19,7 @@ func Hmac() string {
 	claims := MyCustomClaims{
 		"bar",
 		jwt.StandardClaims{
-			ExpiresAt: 15000,
+			ExpiresAt: time.Now().Add(24 * time.Hour).Unix(),
 			Issuer:    "test",
 		},
 	}
@@ -35,7 +36,7 @@ func Hmac() string {
 func Val(tokenString string) {
 	token, err := jwt.ParseWithClaims(tokenString, &MyCustomClaims{}, func(token *jwt.Token) (interface{}, error) {
 		// Don't forget to validate the alg is what you expect:
-		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 
@@ -48,7 +49,7 @@ func Val(tokenString string) {
 
 	if claims, ok := token.Claims.(*MyCustomClaims); ok && token.Valid {
 		// do what you want here
-		fmt.Printf("%v", claims.Foo)
+		fmt.Printf("%v %v\n", claims.Foo, claims.ExpiresAt)
 	} else {
 		fmt.Println(err)
 		fmt.Println(token.Valid)
@@ -60,4 +61,9 @@ func main() {
 	fmt.Printf("%v \n", ss)
 
 	Val(ss)
+	time.Now().Add(24 * time.Hour).Unix()
+	fmt.Println(time.Now())
+
+	now := jwt.TimeFunc().Unix()
+	fmt.Println(now)
 }
