@@ -44,12 +44,17 @@ func Val(tokenString string) {
 		return []byte("TestSecretKey"), nil
 	})
 
-	// fmt.Printf("%v \n", err.Error())
-	// fmt.Printf("%v \n", token.Header)
+	// fmt.Printf("************%v \n", err.Error())
+	fmt.Printf("%v \n", token.Header)
 
-	if claims, ok := token.Claims.(*MyCustomClaims); ok && token.Valid {
+	// if claims, ok := token.Claims.(*MyCustomClaims); ok && token.Valid {
+	if token.Valid {
 		// do what you want here
-		fmt.Printf("%v %v\n", claims.Foo, claims.ExpiresAt)
+		// fmt.Printf("%v %v\n", claims.Foo, claims.ExpiresAt)
+
+		// ipfs request
+		ipfsReq()
+
 	} else {
 		fmt.Println(err)
 		fmt.Println(token.Valid)
